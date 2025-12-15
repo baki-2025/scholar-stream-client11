@@ -1,81 +1,100 @@
-// ModerateProfile.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import useAuth from "../../../hooks/useAuth";
+
 
 const ModeratorProfile = () => {
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState({});
+  const { user } = useAuth();
   const { register, handleSubmit, reset } = useForm();
+  const [loading, setLoading] = useState(true);
+  const [dbUser, setDbUser] = useState(null);
 
-  // Fetch moderator profile
+  // Fetch moderator profile by email
   useEffect(() => {
+    if (!user?.email) return;
+
     const fetchProfile = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/users/me'); // adjust endpoint
-        setProfile(res.data);
-        reset(res.data); // pre-fill the form
+        const res = await axios.get(
+          `http://localhost:3000/users?email=${user.email}`
+        );
+        setDbUser(res.data);
+        reset(res.data);
         setLoading(false);
       } catch (error) {
         console.error(error);
         setLoading(false);
-        alert('Failed to fetch profile');
+        alert("Failed to load profile");
       }
     };
 
     fetchProfile();
-  }, [reset]);
+  }, [user, reset]);
 
   // Update profile
   const onSubmit = async (data) => {
     try {
-      await axios.put(`http://localhost:3000/users/${profile._id}`, data);
-      alert('Profile updated successfully');
+      await axios.patch(
+        `http://localhost:3000/users/${dbUser._id}`,
+        {
+          name: data.name,
+          photoURL: data.photoURL,
+        }
+      );
+      alert("Profile updated successfully");
     } catch (error) {
       console.error(error);
-      alert('Failed to update profile');
+      alert("Failed to update profile");
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="p-6">Loading profile...</p>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Moderate Profile</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-md">
+    <div className="max-w-xl mx-auto p-6 bg-white rounded shadow">
+      <h2 className="text-2xl font-bold mb-4">Moderator Profile</h2>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* Name */}
         <div>
-          <label className="block mb-1">Name</label>
+          <label className="block mb-1 font-medium">Name</label>
           <input
-            type="text"
-            {...register('name', { required: true })}
-            className="border p-2 w-full"
+            {...register("name", { required: true })}
+            className="input input-bordered w-full"
           />
         </div>
 
+        {/* Email */}
         <div>
-          <label className="block mb-1">Email</label>
+          <label className="block mb-1 font-medium">Email</label>
           <input
-            type="email"
-            {...register('email', { required: true })}
-            className="border p-2 w-full"
+            value={user.email}
             disabled
+            className="input input-bordered w-full bg-gray-100"
           />
         </div>
 
+        {/* Role */}
         <div>
-          <label className="block mb-1">Role</label>
+          <label className="block mb-1 font-medium">Role</label>
           <input
-            type="text"
-            {...register('role')}
-            className="border p-2 w-full"
+            value={dbUser.role}
             disabled
+            className="input input-bordered w-full bg-gray-100"
           />
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
+        {/* Photo */}
+        <div>
+          <label className="block mb-1 font-medium">Photo URL</label>
+          <input
+            {...register("photoURL")}
+            className="input input-bordered w-full"
+          />
+        </div>
+
+        <button type="submit" className="btn btn-primary w-full">
           Update Profile
         </button>
       </form>

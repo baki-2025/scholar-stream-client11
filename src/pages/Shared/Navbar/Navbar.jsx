@@ -16,25 +16,22 @@ const Navbar = () => {
   };
 
   const links = (
-    <>
-      <li><NavLink to="/">Home</NavLink></li>
-      <li><NavLink to="/scholarships">All Scholarships</NavLink></li>
+  <>
+    <li><NavLink to="/">Home</NavLink></li>
+    <li><NavLink to="/scholarships">All Scholarships</NavLink></li>
+    <li><NavLink to="scholarships/:id">Scholarship Details</NavLink></li>
 
-      {user && (
-        <>
-          <li><NavLink to="/dashboard">Dashboard</NavLink></li>
-          <li>
-            <NavLink to="/dashboard/my-applications">
-              My Applications
-            </NavLink>
-          </li>
-        </>
-      )}
+    {user && (
+      <>
+        <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+      </>
+    )}
 
-      <li><NavLink to="/stories">Success Stories</NavLink></li>
-      <li><NavLink to="/contact">Contact Us</NavLink></li>
-    </>
-  );
+    <li><NavLink to="/stories">Success Stories</NavLink></li>
+    <li><NavLink to="/contact">Contact Us</NavLink></li>
+  </>
+);
+
 
   return (
     <div className="navbar bg-base-100 shadow-md px-4">

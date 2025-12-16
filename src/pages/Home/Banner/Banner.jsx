@@ -1,26 +1,34 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router";
 
 const Banner = () => {
-  return (
-    <motion.section
-      className="text-center py-20 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl"
-      initial={{ opacity: 0, y: -40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7 }}
-    >
-      <h1 className="text-4xl md:text-6xl font-bold mb-4">
-        Find Your Perfect Scholarship
-      </h1>
-      <p className="max-w-xl mx-auto mb-6 text-lg">
-        Discover and apply for scholarships that match your academic goals.
-      </p>
+  const navigate = useNavigate();
 
-      <a href="/scholarships">
-        <button className="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-200">
-          Search Scholarship
-        </button>
-      </a>
-    </motion.section>
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="hero min-h-[70vh] bg-base-200"
+    >
+      <div className="hero-content text-center">
+        <div className="max-w-2xl">
+          <h1 className="text-5xl font-bold mb-4">
+            Find Your Dream Scholarship
+          </h1>
+          <p className="mb-6 text-gray-600">
+            ScholarStream connects students with global scholarship opportunities
+            and simplifies the application process.
+          </p>
+          <button
+            onClick={() => navigate("/scholarships")}
+            className="btn btn-primary"
+          >
+            Search Scholarships
+          </button>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 

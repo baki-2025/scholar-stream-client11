@@ -39,3 +39,6 @@ const ScholarshipCard = ({ scholarship }) => {
 };
 
 export default ScholarshipCard;
+
+
+

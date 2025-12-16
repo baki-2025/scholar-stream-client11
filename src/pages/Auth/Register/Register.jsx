@@ -9,18 +9,24 @@ const Register = () => {
   const { createUser, updateUserProfile } = useAuth();
   const navigate = useNavigate();
 
-  const { register, handleSubmit, //watch, 
-    formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
 
   const onSubmit = async (data) => {
     try {
       await createUser(data.email, data.password);
-      await updateUserProfile(data.name, data.photo);
 
-      // Default role = Student (save in DB later)
+      // ⚠️ photo will be FileList → upload later to get URL
+      const photoFile = data.photo?.[0];
+
+      await updateUserProfile(data.name, null); // photoURL later
+
       navigate("/");
-    } catch {
-      alert("Registration failed");
+    } catch (error) {
+      alert(error.message || "Registration failed");
     }
   };
 
@@ -34,45 +40,79 @@ const Register = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-        <input
-          type="text"
-          placeholder="Full Name"
-          className="input input-bordered w-full"
-          {...register("name", { required: "Name is required" })}
-        />
-        {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+        {/* Name */}
+        <div>
+          <input
+            type="text"
+            placeholder="Full Name"
+            className="input input-bordered w-full"
+            {...register("name", { required: "Name is required" })}
+          />
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.name.message}
+            </p>
+          )}
+        </div>
 
-        <input
-          type="text"
-          placeholder="Photo URL"
-          className="input input-bordered w-full"
-          {...register("photo")}
-        />
+        {/* Photo */}
+        <div>
+          <input
+            type="file"
+            className="file-input file-input-bordered w-full"
+            accept="image/*"
+            {...register("photo")}
+          />
+        </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="input input-bordered w-full"
-          {...register("email", { required: "Email is required" })}
-        />
-        {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+        {/* Email */}
+        <div>
+          <input
+            type="email"
+            placeholder="Email"
+            className="input input-bordered w-full"
+            {...register("email", { required: "Email is required" })}
+          />
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.email.message}
+            </p>
+          )}
+        </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="input input-bordered w-full"
-          {...register("password", {
-            required: "Password is required",
-            minLength: { value: 6, message: "Password must be at least 6 characters" },
-            pattern: {
-              value: /(?=.*[A-Z])(?=.*[!@#$%^&*])/,
-              message: "Password must contain 1 uppercase and 1 special character"
-            }
-          })}
-        />
-        {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+        {/* Password */}
+        <div>
+          <input
+            type="password"
+            placeholder="Password"
+            className="input input-bordered w-full"
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters",
+              },
+              pattern: {
+                value: /(?=.*[A-Z])(?=.*[!@#$%^&*])/,
+                message:
+                  "Must include 1 uppercase & 1 special character",
+              },
+            })}
+          />
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
 
-        <button className="btn btn-primary w-full">Register</button>
+        <button
+          type="submit"
+          className="btn btn-primary w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Registering..." : "Register"}
+        </button>
       </form>
 
       <div className="divider">OR</div>

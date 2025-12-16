@@ -60,7 +60,7 @@ const Navbar = () => {
           </>
         )}
 
-        <Link to="/scholarships" className="btn btn-primary text-black">
+        <Link to="/scholarships" className="btn btn-secondary text-white">
           Apply Now
         </Link>
       </div>

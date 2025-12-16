@@ -1,109 +1,98 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 
 const ManageApplications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/applications")
-      .then((res) => {
-        setApplications(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Failed to load applications");
+  const fetchApplications = () => {
+    fetch("http://localhost:3000/applications/all") // You may need to create this route in backend
+      .then((res) => res.json())
+      .then((data) => {
+        setApplications(data);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchApplications();
   }, []);
 
-  const updateStatus = async (id, status) => {
-    try {
-      await axios.patch(`http://localhost:3000/applications/${id}`, { status });
-      setApplications((prev) =>
-        prev.map((app) =>
-          app._id === id ? { ...app, status } : app
-        )
-      );
-    } catch (error) {
-      console.error(error);
-      alert("Failed to update status");
-    }
+  const handleStatusUpdate = async (id, status) => {
+    const res = await fetch(`http://localhost:3000/applications/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ applicationStatus: status }),
+    });
+
+    if (res.ok) fetchApplications();
+    else alert("Failed to update status");
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this application?")) return;
+  const handleFeedback = async (id) => {
+    const feedback = prompt("Enter your feedback:");
+    if (!feedback) return;
 
-    try {
-      await axios.delete(`http://localhost:3000/applications/${id}`);
-      setApplications((prev) => prev.filter((app) => app._id !== id));
-      alert("Application deleted");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to delete application");
-    }
+    const res = await fetch(`http://localhost:3000/applications/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ feedback }),
+    });
+
+    if (res.ok) fetchApplications();
+    else alert("Failed to add feedback");
   };
 
-  if (loading) return <p className="p-4">Loading applications...</p>;
+  if (loading) return <p className="text-center my-10">Loading applications...</p>;
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Manage Applications</h2>
-
+    <div>
+      <h2 className="text-3xl font-bold mb-6">Manage Applications</h2>
       <div className="overflow-x-auto">
-        <table className="table table-zebra w-full">
+        <table className="table w-full">
           <thead>
             <tr>
-              <th>Student Email</th>
+              <th>Applicant Name</th>
+              <th>Email</th>
+              <th>University</th>
               <th>Scholarship</th>
               <th>Status</th>
+              <th>Payment</th>
               <th>Actions</th>
             </tr>
           </thead>
-
           <tbody>
             {applications.map((app) => (
               <tr key={app._id}>
-                <td>{app.email}</td>
-                <td>{app.scholarshipTitle}</td>
-                <td>
-                  <span
-                    className={`badge ${
-                      app.status === "Approved"
-                        ? "badge-success"
-                        : app.status === "Rejected"
-                        ? "badge-error"
-                        : "badge-warning"
-                    }`}
-                  >
-                    {app.status}
-                  </span>
-                </td>
+                <td>{app.userName}</td>
+                <td>{app.userEmail}</td>
+                <td>{app.universityName}</td>
+                <td>{app.scholarshipCategory}</td>
+                <td>{app.applicationStatus}</td>
+                <td>{app.paymentStatus}</td>
                 <td className="flex gap-2">
-                  {app.status === "Pending" && (
-                    <>
-                      <button
-                        onClick={() => updateStatus(app._id, "Approved")}
-                        className="btn btn-xs btn-success"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => updateStatus(app._id, "Rejected")}
-                        className="btn btn-xs btn-warning"
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-
                   <button
-                    onClick={() => handleDelete(app._id)}
-                    className="btn btn-xs btn-error"
+                    className="btn btn-sm btn-outline btn-primary"
+                    onClick={() => handleStatusUpdate(app._id, "Processing")}
                   >
-                    Delete
+                    Processing
+                  </button>
+                  <button
+                    className="btn btn-sm btn-outline btn-success"
+                    onClick={() => handleStatusUpdate(app._id, "Completed")}
+                  >
+                    Complete
+                  </button>
+                  <button
+                    className="btn btn-sm btn-outline btn-error"
+                    onClick={() => handleStatusUpdate(app._id, "Rejected")}
+                  >
+                    Reject
+                  </button>
+                  <button
+                    className="btn btn-sm btn-outline btn-warning"
+                    onClick={() => handleFeedback(app._id)}
+                  >
+                    Feedback
                   </button>
                 </td>
               </tr>

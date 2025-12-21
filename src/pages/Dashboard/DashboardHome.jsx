@@ -1,10 +1,7 @@
-
-import Loading from '../../Components/Loading';
-import useRole from '../../hooks/useRole';
-import AdminDashboard from './Admin/AdminDashboard';
-
-import ModeratorDashboardHome from './Moderator/ModeratorDashboard';
-import StudentDashboardHome from './Student/StudentDashboardHome';
+import useRole from "../../hooks/useRole";
+import AdminDashboard from "./AdminDashboard";
+import ModeratorDashboard from "./ModeratorDashboard ";
+import StudentDashboard from "./StudentDashboard";
 
 const DashboardHome = () => {
     const { role, roleLoading } = useRole();
@@ -13,12 +10,13 @@ const DashboardHome = () => {
         return <Loading />;
     }
 
-    if (role === 'admin') {
-        return <AdminDashboard />;
-    } else if (role === 'moderator') {  // corrected
-        return <ModeratorDashboardHome />;
-    } else {
-        return <StudentDashboardHome />;
+    switch (role) {
+        case 'admin':
+            return <AdminDashboard />;
+        case 'moderator':
+            return <ModeratorDashboard />;
+        default:
+            return <StudentDashboard />;
     }
 };
 

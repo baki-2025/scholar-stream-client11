@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const ManageReviews = () => {
+const AllReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -63,4 +63,4 @@ const ManageReviews = () => {
   );
 };
 
-export default ManageReviews;
+export default AllReviews;

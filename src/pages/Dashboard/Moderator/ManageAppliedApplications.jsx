@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const ManageApplications = () => {
+const ManageAppliedApplications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -104,4 +104,4 @@ const ManageApplications = () => {
   );
 };
 
-export default ManageApplications;
+export default ManageAppliedApplications;

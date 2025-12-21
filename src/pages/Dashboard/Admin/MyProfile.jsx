@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 
-const AdminProfile = () => {
+const MyProfile = () => {
   const { user } = useAuth(); // Get logged-in admin info
   const [adminData, setAdminData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,4 +58,4 @@ const AdminProfile = () => {
   );
 };
 
-export default AdminProfile;
+export default MyProfile;

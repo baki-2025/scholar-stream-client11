@@ -1,83 +1,62 @@
-// MyReviews.jsx
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 
-const MyReviews = () => {
+const MyReviews = ({ userEmail }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch logged-in student's reviews
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const res = await axios.get("http://localhost:3000/reviews/my");
-        setReviews(res.data);
+  const fetchReviews = () => {
+    fetch("http://localhost:3000/reviews")
+      .then((res) => res.json())
+      .then((data) => {
+        setReviews(data.filter(r => r.userEmail === userEmail));
         setLoading(false);
-      } catch (error) {
-        console.error(error);
-        alert("Failed to load reviews");
-        setLoading(false);
-      }
-    };
-    fetchReviews();
-  }, []);
-
-  // Delete review
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this review?")) return;
-
-    try {
-      await axios.delete(`http://localhost:3000/reviews/${id}`);
-      setReviews(reviews.filter(r => r._id !== id));
-      alert("Review deleted");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to delete review");
-    }
+      });
   };
 
-  if (loading) return <p className="p-4">Loading reviews...</p>;
+  useEffect(() => {
+    fetchReviews();
+  }, [userEmail]);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this review?")) return;
+    const res = await fetch(`http://localhost:3000/reviews/${id}`, { method: "DELETE" });
+    if (res.ok) fetchReviews();
+    else alert("Failed to delete");
+  };
+
+  if (loading) return <p className="text-center my-10">Loading reviews...</p>;
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">My Reviews</h2>
-
-      {reviews.length === 0 ? (
-        <p className="text-gray-500">You haven’t posted any reviews yet.</p>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2">
-          {reviews.map(review => (
-            <div
-              key={review._id}
-              className="bg-white p-4 rounded shadow"
-            >
-              <h3 className="font-semibold text-lg">
-                {review.scholarshipTitle}
-              </h3>
-
-              <p className="text-sm text-gray-500 mb-1">
-                Rating: ⭐ {review.rating}/5
-              </p>
-
-              <p className="mb-3">{review.comment}</p>
-
-              <div className="flex justify-end gap-2">
-                {/* Optional Edit Button */}
-                {/* <button className="bg-yellow-500 text-white px-3 py-1 rounded">
-                  Edit
-                </button> */}
-
-                <button
-                  onClick={() => handleDelete(review._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+    <div>
+      <h2 className="text-3xl font-bold mb-6">My Reviews</h2>
+      <div className="overflow-x-auto">
+        <table className="table w-full">
+          <thead>
+            <tr>
+              <th>Scholarship</th>
+              <th>University</th>
+              <th>Comment</th>
+              <th>Rating</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reviews.map((rev) => (
+              <tr key={rev._id}>
+                <td>{rev.scholarshipId}</td>
+                <td>{rev.universityName}</td>
+                <td>{rev.reviewComment}</td>
+                <td>{rev.ratingPoint}</td>
+                <td>{new Date(rev.reviewDate).toLocaleDateString()}</td>
+                <td>
+                  <button className="btn btn-sm btn-error" onClick={() => handleDelete(rev._id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

@@ -1,51 +1,87 @@
-// src/pages/Payment/Checkout.jsx
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useNavigate } from "react-router";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
+
 
 const Checkout = ({ scholarship }) => {
   const stripe = useStripe();
   const elements = useElements();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
-  const amount = scholarship.applicationFees + scholarship.serviceCharge;
+  const amount =
+    Number(scholarship.applicationFees) +
+    Number(scholarship.serviceCharge);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const { data } = await axiosSecure.post("/create-payment-intent", {
-      amount,
-    });
+    if (!stripe || !elements) return;
 
     const card = elements.getElement(CardElement);
+    if (!card) return;
 
-    const result = await stripe.confirmCardPayment(data.clientSecret, {
-      payment_method: { card },
-    });
+    setLoading(true);
 
-    if (result.paymentIntent?.status === "succeeded") {
-      // save application
-      await axiosSecure.post("/applications", {
-        scholarshipId: scholarship._id,
-        universityName: scholarship.universityName,
-        applicationFees: scholarship.applicationFees,
-        serviceCharge: scholarship.serviceCharge,
-        paymentStatus: "paid",
-        applicationStatus: "pending",
+    try {
+      // 1️⃣ Create payment intent (amount in cents)
+      const { data } = await axiosSecure.post("/create-payment-intent", {
+        amount: amount * 100,
       });
 
-      navigate("/payment-success");
-    } else {
+      // 2️⃣ Confirm card payment
+      const result = await stripe.confirmCardPayment(data.clientSecret, {
+        payment_method: {
+          card,
+          billing_details: {
+            email: user.email,
+            name: user.name,
+          },
+        },
+      });
+
+      // 3️⃣ Handle payment result
+      if (result.paymentIntent?.status === "succeeded") {
+        // Save application
+        await axiosSecure.post("/applications", {
+          scholarshipId: scholarship._id,
+          userId: user._id,
+          userName: user.name,
+          userEmail: user.email,
+          universityName: scholarship.universityName,
+          scholarshipCategory: scholarship.scholarshipCategory,
+          degree: scholarship.degree,
+          applicationFees: scholarship.applicationFees,
+          serviceCharge: scholarship.serviceCharge,
+          paymentStatus: "paid",
+          applicationStatus: "pending",
+          applicationDate: new Date(),
+        });
+
+        navigate("/payment-success");
+      } else {
+        navigate("/payment-failed");
+      }
+    } catch (error) {
+      console.error(error);
       navigate("/payment-failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <CardElement />
-      <button className="btn btn-primary mt-4" disabled={!stripe}>
-        Pay ${amount}
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <CardElement className="p-3 border rounded" />
+
+      <button
+        className="btn btn-primary w-full"
+        disabled={!stripe || loading}
+      >
+        {loading ? "Processing..." : `Pay $${amount}`}
       </button>
     </form>
   );

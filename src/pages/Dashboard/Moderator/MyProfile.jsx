@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import useAuth from "../../../hooks/useAuth";
 
 
-const ModeratorProfile = () => {
+const MyProfile = () => {
   const { user } = useAuth();
   const { register, handleSubmit, reset } = useForm();
   const [loading, setLoading] = useState(true);
@@ -102,4 +102,4 @@ const ModeratorProfile = () => {
   );
 };
 
-export default ModeratorProfile;
+export default MyProfile;

@@ -5,7 +5,7 @@ const AllReviews = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchReviews = () => {
-    fetch("http://localhost:3000/reviews")
+    fetch("VITE_API_URL/reviews")
       .then((res) => res.json())
       .then((data) => {
         setReviews(data);
@@ -19,7 +19,7 @@ const AllReviews = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this review?")) return;
-    const res = await fetch(`http://localhost:3000/reviews/${id}`, { method: "DELETE" });
+    const res = await fetch(`VITE_API_URL/reviews/${id}`, { method: "DELETE" });
     if (res.ok) fetchReviews();
     else alert("Failed to delete");
   };

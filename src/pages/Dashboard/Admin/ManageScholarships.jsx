@@ -5,20 +5,20 @@ const ManageScholarships = () => {
   const [editData, setEditData] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/admin/scholarships")
+    fetch("VITE_API_URL/admin/scholarships")
       .then(res => res.json())
       .then(data => setScholarships(data));
   }, []);
 
   const deleteScholarship = async (id) => {
-    await fetch(`http://localhost:3000/admin/scholarships/${id}`, {
+    await fetch(`VITE_API_URL/admin/scholarships/${id}`, {
       method: "DELETE",
     });
     setScholarships(scholarships.filter(s => s._id !== id));
   };
 
   const updateScholarship = async () => {
-    await fetch(`http://localhost:3000/admin/scholarships/${editData._id}`, {
+    await fetch(`VITE_API_URL/admin/scholarships/${editData._id}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(editData),
@@ -32,7 +32,7 @@ const ManageScholarships = () => {
 
   return (
     <div className="card bg-base-100 shadow p-6">
-      <h2 className="text-2xl font-bold mb-4">Manage Scholarships</h2>
+      <h2 className="text-2xl text-center font-bold mb-4">Manage Scholarships</h2>
 
       <table className="table table-zebra">
         <thead>

@@ -11,7 +11,7 @@ import StudentRoute from "./StudentRoute";
 import NotFound from "../pages/NotFound/NotFound";
 import Home from "../pages/Home/Home/Home";
 import AllScholarships from "../pages/AllScholarships/AllScholarships";
-import ScholarshipDetails from "../pages/ScholarshipDetails/ScholarshipDetails";
+
 import Login from "../pages/Auth/Login/Login";
 import Register from "../pages/Auth/Register/Register";
 
@@ -39,6 +39,7 @@ import MyApplications from "../pages/Dashboard/Student/MyApplications";
 import MyReviews from "../pages/Dashboard/Student/MyReviews";
 import MyProfile from "../pages/Dashboard/MyProfile";
 import ModeratorDashboard from "../pages/Dashboard/ModeratorDashboard ";
+import ScholarshipDetails from "../pages/ScholarshipDetails/ScholarshipDetails";
 
 
 export const router = createBrowserRouter([

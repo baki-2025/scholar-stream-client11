@@ -5,13 +5,13 @@ const ManageUsers = () => {
   const [roleFilter, setRoleFilter] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3000/admin/users")
+    fetch("VITE_API_URL/admin/users")
       .then(res => res.json())
       .then(data => setUsers(data));
   }, []);
 
   const updateRole = async (id, role) => {
-    await fetch(`http://localhost:3000/admin/users/role/${id}`, {
+    await fetch(`VITE_API_URL/admin/users/role/${id}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ role }),
@@ -21,7 +21,7 @@ const ManageUsers = () => {
   };
 
   const deleteUser = async (id) => {
-    await fetch(`http://localhost:3000/admin/users/${id}`, {
+    await fetch(`VITE_API_URL/admin/users/${id}`, {
       method: "DELETE",
     });
     setUsers(users.filter(u => u._id !== id));

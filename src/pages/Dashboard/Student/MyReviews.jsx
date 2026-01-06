@@ -1,62 +1,126 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import useAuth from "../../../hooks/useAuth";
 
-const MyReviews = ({ userEmail }) => {
+const MyReviews = () => {
+  const { user } = useAuth();
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchReviews = () => {
-    fetch("http://localhost:3000/reviews")
-      .then((res) => res.json())
-      .then((data) => {
-        setReviews(data.filter(r => r.userEmail === userEmail));
-        setLoading(false);
-      });
-  };
+  const [editReview, setEditReview] = useState(null);
 
   useEffect(() => {
-    fetchReviews();
-  }, [userEmail]);
+    fetch(`VITE_API_URL/reviews/student/${user.email}`)
+      .then(res => res.json())
+      .then(data => setReviews(data));
+  }, [user.email]);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this review?")) return;
-    const res = await fetch(`http://localhost:3000/reviews/${id}`, { method: "DELETE" });
-    if (res.ok) fetchReviews();
-    else alert("Failed to delete");
+  const deleteReview = async (id) => {
+    await fetch(`VITE_API_URL/reviews/${id}`, {
+      method: "DELETE",
+    });
+    setReviews(reviews.filter(r => r._id !== id));
   };
 
-  if (loading) return <p className="text-center my-10">Loading reviews...</p>;
+  const updateReview = async () => {
+    await fetch(`VITE_API_URL/reviews/${editReview._id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        rating: editReview.rating,
+        comment: editReview.comment,
+      }),
+    });
+
+    setReviews(reviews.map(r =>
+      r._id === editReview._id ? editReview : r
+    ));
+    setEditReview(null);
+  };
 
   return (
-    <div>
-      <h2 className="text-3xl font-bold mb-6">My Reviews</h2>
-      <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>Scholarship</th>
-              <th>University</th>
-              <th>Comment</th>
-              <th>Rating</th>
-              <th>Date</th>
-              <th>Actions</th>
+    <div className="card bg-base-100 shadow p-6">
+      <h2 className="text-2xl text-center font-bold mb-4">My Reviews</h2>
+
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Scholarship Name</th>
+            <th>University Name</th>
+            <th>Review Comment</th>
+            <th>Review Date</th>
+            <th>Rating</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {reviews.map(review => (
+            <tr key={review._id}>
+              <td>{review.scholarshipName}</td>
+              <td>{review.universityName}</td>
+              <td>{review.comment}</td>
+              <td>{review.date}</td>
+              <td>{review.rating} ★</td>
+              <td>{review.actions}</td>
+              <td className="space-x-1">
+                <button
+                  onClick={() => setEditReview(review)}
+                  className="btn btn-xs btn-info"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => deleteReview(review._id)}
+                  className="btn btn-xs btn-error"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {reviews.map((rev) => (
-              <tr key={rev._id}>
-                <td>{rev.scholarshipId}</td>
-                <td>{rev.universityName}</td>
-                <td>{rev.reviewComment}</td>
-                <td>{rev.ratingPoint}</td>
-                <td>{new Date(rev.reviewDate).toLocaleDateString()}</td>
-                <td>
-                  <button className="btn btn-sm btn-error" onClick={() => handleDelete(rev._id)}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Edit Modal */}
+      {editReview && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold">Edit Review</h3>
+
+            <select
+              value={editReview.rating}
+              onChange={(e) =>
+                setEditReview({ ...editReview, rating: e.target.value })
+              }
+              className="select select-bordered w-full"
+            >
+              <option value="5">★★★★★</option>
+              <option value="4">★★★★</option>
+              <option value="3">★★★</option>
+              <option value="2">★★</option>
+              <option value="1">★</option>
+            </select>
+
+            <textarea
+              className="textarea textarea-bordered w-full mt-2"
+              value={editReview.comment}
+              onChange={(e) =>
+                setEditReview({ ...editReview, comment: e.target.value })
+              }
+            />
+
+            <div className="modal-action">
+              <button onClick={updateReview} className="btn btn-success">
+                Update
+              </button>
+              <button
+                onClick={() => setEditReview(null)}
+                className="btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

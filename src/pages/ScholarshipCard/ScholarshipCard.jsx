@@ -6,7 +6,7 @@ const ScholarshipCard = ({ scholarship }) => {
     <div className="card bg-base-100 shadow-md border hover:shadow-xl transition duration-200">
       <figure>
         <img
-          src={scholarship.universityImage || "/placeholder.jpg"}
+          src={scholarship.universityImage}
           alt={scholarship.universityName}
           className="h-44 w-full object-cover"
         />
@@ -19,7 +19,7 @@ const ScholarshipCard = ({ scholarship }) => {
         <div className="card-actions justify-end mt-3">
           <button
             className="btn btn-primary btn-sm"
-            onClick={() => navigate(`/scholarships/${scholarship._id}`)}
+            onClick={() => navigate(`/scholarshipsDetails/${scholarship._id}`)}
           >
             View Details
           </button>

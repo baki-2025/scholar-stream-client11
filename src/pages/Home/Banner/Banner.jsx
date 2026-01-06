@@ -22,7 +22,7 @@ const Banner = () => {
           </p>
           <button
             onClick={() => navigate("/scholarships")}
-            className="btn btn-primary"
+            className="btn btn-primary text-orange-600"
           >
             Search Scholarships
           </button>

@@ -1,8 +1,16 @@
 import React from 'react';
 
+
+
+
 const Footer = () => {
     return (
         <footer className="footer footer-horizontal footer-center bg-primary text-base-content rounded p-10">
+          
+         
+         <h2>Scholar Stream</h2>
+         
+           
   <nav className="grid grid-flow-col gap-4">
     <a className="link link-hover">About us</a>
     <a className="link link-hover">Contact</a>
@@ -11,6 +19,7 @@ const Footer = () => {
   </nav>
   <nav>
     <div className="grid grid-flow-col gap-4">
+      
       <a>
         <svg
           xmlns="http://www.w3.org/2000/svg"

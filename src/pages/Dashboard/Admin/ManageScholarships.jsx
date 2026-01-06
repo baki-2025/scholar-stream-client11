@@ -1,73 +1,110 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const ManageScholarships = () => {
   const [scholarships, setScholarships] = useState([]);
-
-  const fetchScholarships = () => {
-    fetch("http://localhost:3000/scholarships")
-      .then((res) => res.json())
-      .then((data) => setScholarships(data));
-  };
+  const [editData, setEditData] = useState(null);
 
   useEffect(() => {
-    fetchScholarships();
+    fetch("http://localhost:3000/admin/scholarships")
+      .then(res => res.json())
+      .then(data => setScholarships(data));
   }, []);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure to delete this scholarship?")) return;
-
-    const res = await fetch(`http://localhost:3000/scholarships/${id}`, {
+  const deleteScholarship = async (id) => {
+    await fetch(`http://localhost:3000/admin/scholarships/${id}`, {
       method: "DELETE",
     });
+    setScholarships(scholarships.filter(s => s._id !== id));
+  };
 
-    if (res.ok) {
-      alert("Deleted successfully");
-      fetchScholarships();
-    } else {
-      alert("Failed to delete");
-    }
+  const updateScholarship = async () => {
+    await fetch(`http://localhost:3000/admin/scholarships/${editData._id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(editData),
+    });
+
+    setScholarships(scholarships.map(s =>
+      s._id === editData._id ? editData : s
+    ));
+    setEditData(null);
   };
 
   return (
-    <div>
-      <h2 className="text-3xl font-bold mb-6">Manage Scholarships</h2>
-      <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>University</th>
-              <th>Category</th>
-              <th>Degree</th>
-              <th>Fees</th>
-              <th>Actions</th>
+    <div className="card bg-base-100 shadow p-6">
+      <h2 className="text-2xl font-bold mb-4">Manage Scholarships</h2>
+
+      <table className="table table-zebra">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>University</th>
+            <th>Deadline</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {scholarships.map(s => (
+            <tr key={s._id}>
+              <td>{s.scholarshipName}</td>
+              <td>{s.universityName}</td>
+              <td>{s.deadline}</td>
+              <td>
+                <button
+                  onClick={() => setEditData(s)}
+                  className="btn btn-xs btn-info mr-1"
+                >
+                  Update
+                </button>
+                <button
+                  onClick={() => deleteScholarship(s._id)}
+                  className="btn btn-xs btn-error"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {scholarships.map((sch) => (
-              <tr key={sch._id}>
-                <td>{sch.scholarshipName}</td>
-                <td>{sch.universityName}</td>
-                <td>{sch.scholarshipCategory}</td>
-                <td>{sch.degree}</td>
-                <td>${sch.applicationFees || 0}</td>
-                <td className="flex gap-2">
-                  {/* Update button can navigate to Edit page */}
-                  <button className="btn btn-sm btn-outline btn-primary">
-                    Update
-                  </button>
-                  <button
-                    className="btn btn-sm btn-outline btn-error"
-                    onClick={() => handleDelete(sch._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Edit Modal */}
+      {editData && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold">Update Scholarship</h3>
+
+            <input
+              value={editData.scholarshipName}
+              onChange={(e) =>
+                setEditData({ ...editData, scholarshipName: e.target.value })
+              }
+              className="input input-bordered w-full mb-2"
+            />
+
+            <input
+              value={editData.universityName}
+              onChange={(e) =>
+                setEditData({ ...editData, universityName: e.target.value })
+              }
+              className="input input-bordered w-full mb-2"
+            />
+
+            <div className="modal-action">
+              <button onClick={updateScholarship} className="btn btn-success">
+                Save
+              </button>
+              <button
+                onClick={() => setEditData(null)}
+                className="btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -60,7 +60,7 @@ const TopScholarships = () => {
           >
             <figure>
               <img
-                src={item.universityImage || "/placeholder.jpg"}
+                src={item.universityImage}
                 alt={item.universityName}
                 className="h-48 w-full object-cover"
               />

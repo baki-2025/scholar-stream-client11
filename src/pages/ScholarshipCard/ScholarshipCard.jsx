@@ -68,7 +68,7 @@ const ScholarshipCard = ({ scholarship }) => {
           onClick={() =>
             navigate(`/scholarshipDetails/${scholarship._id}`)
           }
-          className="w-full mt-3 bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="w-full mt-3 bg-blue-600 text-black text-white py-2 rounded hover:bg-blue-700"
         >
           View Details
         </button>

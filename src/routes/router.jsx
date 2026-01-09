@@ -15,8 +15,8 @@ import AllScholarships from "../pages/AllScholarships/AllScholarships";
 import Login from "../pages/Auth/Login/Login";
 import Register from "../pages/Auth/Register/Register";
 
-import Checkout from "../pages/Payment/Checkout";
-import PaymentSuccess from "../pages/Payment/PaymentSuccess";
+
+
 import PaymentFailed from "../pages/Payment/PaymentFailed";
 
 import DashboardHome from "../pages/Dashboard/DashboardHome";
@@ -40,6 +40,8 @@ import MyReviews from "../pages/Dashboard/Student/MyReviews";
 import MyProfile from "../pages/Dashboard/MyProfile";
 import ModeratorDashboard from "../pages/Dashboard/ModeratorDashboard ";
 import ScholarshipDetails from "../pages/ScholarshipDetails/ScholarshipDetails";
+import Payment from "../pages/Payment/Payment";
+import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 
 
 export const router = createBrowserRouter([
@@ -55,16 +57,16 @@ export const router = createBrowserRouter([
       { path: "register", element: <Register /> },
 
       {
-        path: "checkout/:id",
+        path:'payment/:scholarshipId',
         element: (
           <PrivateRoute>
-            <Checkout />
+            <Payment />
           </PrivateRoute>
         ),
       },
 
-      { path: "payment/success", element: <PaymentSuccess /> },
-      { path: "payment/failed", element: <PaymentFailed /> },
+      { path: "payment-success/:applicationId", element: <PaymentSuccess /> },
+      { path: "payment-failed", element: <PaymentFailed /> },
     ],
   },
 

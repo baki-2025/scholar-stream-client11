@@ -65,7 +65,7 @@ const AddScholarship = () => {
       <input type="date" {...register("deadline")} className="input input-bordered w-full mb-2" required />
       <input {...register("userEmail")} type="email" className="input input-bordered w-full mb-4" placeholder="Admin Email" required />
 
-      <button type="submit" className="btn btn-primary w-full">Add Scholarship</button>
+      <button type="submit" className="btn btn-primary text-black w-full">Add Scholarship</button>
     </form>
   );
 };

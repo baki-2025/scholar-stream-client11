@@ -64,9 +64,7 @@ const Navbar = () => {
           </>
         )}
 
-        <Link to="/scholarships" className="btn text-2xl text-yellow-400 font-semibold">
-          Apply Now
-        </Link>
+        
       </div>
     </div>
   );

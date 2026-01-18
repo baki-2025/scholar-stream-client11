@@ -1,79 +1,33 @@
-import { useParams, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useSearchParams, Link } from "react-router";
+import axios from "axios";
 
 const PaymentSuccess = () => {
-  const { applicationId } = useParams();
-  const navigate = useNavigate();
-  const axiosSecure = useAxiosSecure();
-
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [params] = useSearchParams();
+  const sessionId = params.get("session_id");
+  const [application, setApplication] = useState(null);
 
   useEffect(() => {
-    const updatePaymentStatus = async () => {
-      try {
-        const res = await axiosSecure.patch(
-          `/my-applications/pay/${applicationId}`
-        );
-        setData(res.data);
-      } catch (err) {
-        console.error("Payment update failed:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
+    axios
+      .patch(`http://localhost:3000/applications/confirm/${sessionId}`)
+      .then(res => setApplication(res.data.application));
+  }, [sessionId]);
 
-    if (applicationId) {
-      updatePaymentStatus();
-    }
-  }, [applicationId, axiosSecure]);
+  if (!application) return <p className="text-center">Finalizing payment...</p>;
 
-  /* ================= LOADING ================= */
-  if (loading) {
-    return (
-      <div className="flex justify-center my-16">
-        <span className="loading loading-infinity loading-xl"></span>
-      </div>
-    );
-  }
-
-  /* ================= ERROR ================= */
-  if (error || !data) {
-    return (
-      <div className="text-center text-red-500 mt-20">
-        Failed to confirm payment.
-      </div>
-    );
-  }
-
-  /* ================= SUCCESS UI ================= */
   return (
-    <div className="text-center mt-20">
-      <h2 className="text-3xl font-bold text-green-600">
+    <div className="max-w-xl mx-auto p-6 bg-base-100 shadow text-center">
+      <h2 className="text-3xl font-bold text-green-600 mb-4">
         Payment Successful 🎉
       </h2>
 
-      <p className="mt-4">
-        <strong>Scholarship:</strong> {data.scholarshipName}
-      </p>
+      <p><strong>Scholarship:</strong> {application.scholarshipName}</p>
+      <p><strong>University:</strong> {application.universityName}</p>
+      <p><strong>Amount Paid:</strong> ${application.amount}</p>
 
-      <p>
-        <strong>University:</strong> {data.universityName}
-      </p>
-
-      <p className="mt-2">
-        <strong>Amount Paid:</strong> ${data.amount}
-      </p>
-
-      <button
-        onClick={() => navigate("/dashboard/student/my-applications")}
-        className="mt-6 bg-blue-600 text-white px-6 py-3 rounded"
-      >
+      <Link to="/dashboard/student/my-applications" className="btn btn-success mt-6">
         Go to My Applications
-      </button>
+      </Link>
     </div>
   );
 };

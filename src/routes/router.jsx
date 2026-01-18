@@ -1,27 +1,18 @@
 import { createBrowserRouter } from "react-router";
-
 import MainLayout from "../layouts/MainLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
-
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
 import ModeratorRoute from "./ModeratorRoute";
 import StudentRoute from "./StudentRoute";
-
 import NotFound from "../pages/NotFound/NotFound";
 import Home from "../pages/Home/Home/Home";
 import AllScholarships from "../pages/AllScholarships/AllScholarships";
-
 import Login from "../pages/Auth/Login/Login";
 import Register from "../pages/Auth/Register/Register";
-
-
-
 import PaymentFailed from "../pages/Payment/PaymentFailed";
-
 import DashboardHome from "../pages/Dashboard/DashboardHome";
 import AdminDashboard from "../pages/Dashboard/AdminDashboard";
-
 import StudentDashboard from "../pages/Dashboard/StudentDashboard";
 
 // Admin pages
@@ -40,8 +31,9 @@ import MyReviews from "../pages/Dashboard/Student/MyReviews";
 import MyProfile from "../pages/Dashboard/MyProfile";
 import ModeratorDashboard from "../pages/Dashboard/ModeratorDashboard ";
 import ScholarshipDetails from "../pages/ScholarshipDetails/ScholarshipDetails";
-import Payment from "../pages/Payment/Payment";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
+import Payment from "../pages/Payment/Payment";
+
 
 
 export const router = createBrowserRouter([
@@ -56,17 +48,18 @@ export const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
 
-      {
-        path:'payment/:scholarshipId',
-        element: (
-          <PrivateRoute>
-            <Payment />
-          </PrivateRoute>
-        ),
-      },
+     {
+  path: "payment/:scholarshipId",
+  element: (
+    <PrivateRoute>
+      <Payment />
+    </PrivateRoute>
+  )
+},
 
-      { path: "payment-success/:applicationId", element: <PaymentSuccess /> },
-      { path: "payment-failed", element: <PaymentFailed /> },
+
+      { path: "/payment-success", element: <PaymentSuccess /> },
+      { path: "/payment-failed", element: <PaymentFailed /> },
     ],
   },
 

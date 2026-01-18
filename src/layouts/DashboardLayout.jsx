@@ -56,7 +56,7 @@ const DashboardLayout = () => {
            {/* ===== Admin Menu ===== */}
 {role === "admin" && (
   <>
-    <li className="menu-title">Admin</li>
+    <li className="menu-title text-3xl text-violet-500 font-bold">Admin</li>
     
     <li>
       <NavLink to="/dashboard/admin/add-scholarship">
@@ -84,7 +84,7 @@ const DashboardLayout = () => {
 {/* ===== Moderator Menu ===== */}
 {role === "moderator" && (
   <>
-    <li className="menu-title">Moderator</li>
+    <li className="menu-title text-3xl text-green-500 font-bold">Moderator</li>
     
 
     <li>
@@ -103,7 +103,7 @@ const DashboardLayout = () => {
 {/* ===== Student Menu ===== */}
 {role === "student" && (
   <>
-    <li className="menu-title">Student</li>
+    <li className="menu-title text-3xl text-blue-500 font-bold">Student</li>
     
     <li>
       <NavLink to="/dashboard/student/my-applications">

@@ -20,13 +20,13 @@ const Navbar = () => {
 
   const links = (
   <>
-    <li><NavLink to="/" className='text-2xl text-sky-300 font-semibold'>Home</NavLink></li>
-    <li><NavLink to="/scholarships"className='text-2xl text-green-300 font-semibold'>All Scholarships</NavLink></li>
+    <li><NavLink to="/" className='text-2xl text-blue-600 font-semibold'>Home</NavLink></li>
+    <li><NavLink to="/scholarships"className='text-2xl text-green-600 font-semibold'>All Scholarships</NavLink></li>
     
 
     {user && (
       <>
-        <li><NavLink to="/dashboard" className="text-2xl text-violet-400 font-semibold">Dashboard</NavLink></li>
+        <li><NavLink to="/dashboard" className="text-2xl text-violet-600 font-semibold">Dashboard</NavLink></li>
       </>
     )}
 
@@ -40,7 +40,7 @@ const Navbar = () => {
       {/* LEFT */}
       <div className="navbar-start">
         
-        <Link to="/" className="btn text-2xl text-red-200 font-semibold">
+        <Link to="/" className="btn text-2xl text-red-600 font-semibold">
         <FcDepartment />
           ScholarStream
         </Link>
@@ -54,13 +54,13 @@ const Navbar = () => {
       {/* RIGHT */}
       <div className="navbar-end gap-2">
         {user ? (
-          <button onClick={handleLogout} className="btn text-2xl text-violet-400 font-semibold">
+          <button onClick={handleLogout} className="btn text-2xl text-red-600 font-semibold">
             Logout
           </button>
         ) : (
           <>
-            <Link to="/login" className="btn text-2xl text-violet-400 font-semibold">Login</Link>
-            <Link to="/register" className="btn text-2xl text-violet-400 font-semibold">Register</Link>
+            <Link to="/login" className="btn text-2xl text-green-600 font-semibold">Login</Link>
+            <Link to="/register" className="btn text-2xl text-yellow-600 font-semibold">Register</Link>
           </>
         )}
 

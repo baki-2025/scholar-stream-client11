@@ -1,92 +1,46 @@
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useParams, useNavigate } from "react-router";
+import { useContext } from "react";
+import axios from "axios";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Payment = () => {
   const { scholarshipId } = useParams();
-  const axiosSecure = useAxiosSecure();
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  /* ================= FETCH SCHOLARSHIP ================= */
-  const {
-    isLoading,
-    isError,
-    data: scholarship,
-  } = useQuery({
-    queryKey: ["scholarship", scholarshipId],
-    queryFn: async () => {
-      const res = await axiosSecure.get(`/scholarships/${scholarshipId}`);
-      return res.data;
-    },
-    enabled: !!scholarshipId,
-  });
-
-  /* ================= HANDLE PAYMENT ================= */
-  /* ================= HANDLE PAYMENT ================= */
-const handlePayment = async () => {
-  if (!scholarship?._id) return;
-
-  try {
-    const res = await axiosSecure.post("/create-checkout-session", {
-      scholarshipId: scholarship._id,
+  const handlePayment = async () => {
+    // 1️⃣ create application first
+    const applicationRes = await axios.post("http://localhost:3000/applications", {
+      scholarshipId,
+      scholarshipName: "Merit Scholarship",
+      universityName: "Oxford University",
+      scholarshipCategory: "Full Fund",
+      applicantEmail: user.email,
+      amount: 50,
+      applicationStatus: "pending",
     });
 
-    // Redirect to Stripe Checkout
-    window.location.href = res.data.url;
-  } catch (error) {
-    console.error("Payment error:", error);
-   
-  }
-};
+    const applicationId = applicationRes.data.insertedId;
 
-
-  /* ================= LOADING ================= */
-  if (isLoading) {
-    return (
-      <div className="flex justify-center my-16">
-        <span className="loading loading-infinity loading-xl"></span>
-      </div>
+    // 2️⃣ create stripe session
+    const res = await axios.post(
+      "http://localhost:3000/payment-checkout-session",
+      {
+        applicationId,
+        scholarshipName: "Merit Scholarship",
+        amount: 50,
+        userEmail: user.email,
+      }
     );
-  }
 
-  /* ================= ERROR ================= */
-  if (isError || !scholarship) {
-    return (
-      <div className="text-center text-red-500 my-16">
-        Failed to load scholarship data.
-      </div>
-    );
-  }
+    window.location.replace(res.data.url);
+  };
 
-  const totalAmount =
-    Number(scholarship.applicationFees || 0) +
-    Number(scholarship.serviceCharge || 0);
-
-  /* ================= UI ================= */
   return (
-    <div className="max-w-md mx-auto p-6 bg-white shadow rounded">
-      <h2 className="text-xl font-bold mb-4">Scholarship Payment</h2>
-
-      <p className="mb-2">
-        <strong>Scholarship:</strong> {scholarship.scholarshipName}
-      </p>
-
-      <p className="mb-2">
-        <strong>University:</strong> {scholarship.universityName}
-      </p>
-
-      <p className="mb-2">
-        <strong>Application Fee:</strong> ${scholarship.applicationFees}
-      </p>
-
-      <p className="mb-4">
-        <strong>Service Charge:</strong> ${scholarship.serviceCharge}
-      </p>
-
-      <button
-        onClick={handlePayment}
-        className="btn btn-primary w-full text-black"
-      >
-        Pay ${totalAmount}
+    <div className="text-center mt-10">
+      <h2 className="text-2xl font-bold mb-4">Application Fee: $50</h2>
+      <button onClick={handlePayment} className="btn btn-primary">
+        Pay & Apply
       </button>
     </div>
   );

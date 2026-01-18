@@ -28,7 +28,7 @@ const AllReviews = () => {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold mb-6">Manage Reviews</h2>
+      <h2 className="text-3xl text-center font-bold mb-6">Manage Reviews</h2>
       <div className="overflow-x-auto">
         <table className="table w-full">
           <thead>

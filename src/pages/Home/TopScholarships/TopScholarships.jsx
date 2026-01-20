@@ -56,7 +56,7 @@ const TopScholarships = () => {
 
   return (
     <section className="my-14 px-4">
-      <h2 className="text-3xl font-bold text-center mb-10">
+      <h2 className="text-3xl font-bold text-blue-600 text-center mb-10">
         Top Scholarships
       </h2>
 
@@ -72,8 +72,8 @@ const TopScholarships = () => {
           >
             <figure>
               <img
-                src={item.universityImage}
-                alt={item.universityName}
+                src={item.image}
+                alt=""
                 className="h-48 w-full object-cover"
               />
             </figure>
@@ -98,12 +98,12 @@ const TopScholarships = () => {
 
               <p className="text-sm">
                 <strong>Application Fee:</strong>{" "}
-                {item.applicationFee || "Free"}
+                {item.scholarshipFee}
               </p>
 
               <Link
                 to={`/scholarshipDetails/${item._id}`}
-                className="btn btn-primary btn-sm mt-3 w-full"
+                className="btn btn-primary text-green-900 btn-sm mt-3 w-full"
               >
                 View Details
               </Link>

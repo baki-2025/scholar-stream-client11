@@ -13,10 +13,10 @@ const Banner = () => {
     >
       <div className="hero-content text-center">
         <div className="max-w-2xl">
-          <h1 className="text-5xl font-bold mb-4">
+          <h1 className="text-5xl text-yellow-900 font-bold mb-4">
             Find Your Dream Scholarship
           </h1>
-          <p className="mb-6 text-gray-600">
+          <p className="mb-6 text-green-600">
             ScholarStream connects students with global scholarship opportunities
             and simplifies the application process.
           </p>

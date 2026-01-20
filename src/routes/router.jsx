@@ -37,6 +37,7 @@ import Payment from "../pages/Payment/Payment";
 
 
 export const router = createBrowserRouter([
+  // ===== PUBLIC PAGES =====
   {
     path: "/",
     element: <MainLayout />,
@@ -48,21 +49,28 @@ export const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
 
-     {
-  path: "payment/:scholarshipId",
-  element: (
-    <PrivateRoute>
-      <Payment />
-    </PrivateRoute>
-  )
-},
-
-
-      { path: "/payment-success", element: <PaymentSuccess /> },
-      { path: "/payment-failed", element: <PaymentFailed /> },
+      {
+        path: "payment/:scholarshipId",
+        element: (
+          <PrivateRoute>
+            <Payment />
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 
+  // ===== STRIPE CALLBACK ROUTES (TOP LEVEL) =====
+  {
+    path: "/payment-success",
+    element: <PaymentSuccess />,
+  },
+  {
+    path: "/payment-failed",
+    element: <PaymentFailed />,
+  },
+
+  // ===== DASHBOARD =====
   {
     path: "/dashboard",
     element: (
@@ -118,5 +126,6 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
+
 
 export default router;

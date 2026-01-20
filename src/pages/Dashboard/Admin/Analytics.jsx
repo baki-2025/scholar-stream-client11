@@ -14,17 +14,20 @@ import {
 const Analytics = () => {
   const [stats, setStats] = useState(null);
 
-  useEffect(() => {
-    fetch("VITE_API_URL/admin/analytics")
-      .then(res => res.json())
-      .then(data => setStats(data));
-  }, []);
+ const API = import.meta.env.VITE_API_URL;
+
+useEffect(() => {
+  fetch(`${API}/admin/analytics`)
+    .then(res => res.json())
+    .then(data => setStats(data));
+}, [API]);
+
 
   if (!stats) return <p>Loading...</p>;
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold">Admin Analytics</h2>
+      <h2 className="text-3xl text-center font-bold">Admin Analytics</h2>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

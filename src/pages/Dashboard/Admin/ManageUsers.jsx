@@ -53,7 +53,7 @@ const ManageUsers = () => {
 
   return (
     <div className="card bg-base-100 shadow p-6">
-      <h2 className="text-2xl font-bold mb-4">Manage Users</h2>
+      <h2 className="text-2xl text-center font-bold mb-4">Manage Users</h2>
 
      <select
   className="select select-bordered mb-4"

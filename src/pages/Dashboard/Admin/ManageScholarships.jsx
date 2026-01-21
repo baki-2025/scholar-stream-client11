@@ -1,43 +1,82 @@
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const ManageScholarships = () => {
   const [scholarships, setScholarships] = useState([]);
   const [editData, setEditData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const API_BASE = import.meta.env.VITE_API_URL; // Set in .env file
+  const API_BASE = import.meta.env.VITE_API_URL;
 
-  // Fetch all scholarships
+  /* ================= FETCH SCHOLARSHIPS ================= */
   useEffect(() => {
     fetch(`${API_BASE}/admin/scholarships`)
       .then((res) => res.json())
-      .then((data) => setScholarships(data));
+      .then((data) => {
+        setScholarships(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
-  // Delete a scholarship
+  /* ================= DELETE ================= */
   const deleteScholarship = async (id) => {
-    const confirm = window.confirm("Are you sure you want to delete?");
-    if (!confirm) return;
-
-    await fetch(`${API_BASE}/admin/scholarships/${id}`, {
-      method: "DELETE",
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This scholarship will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it",
     });
 
-    setScholarships(scholarships.filter((s) => s._id !== id));
+    if (!result.isConfirmed) return;
+
+    try {
+      await fetch(`${API_BASE}/admin/scholarships/${id}`, {
+        method: "DELETE",
+      });
+
+      setScholarships(scholarships.filter((s) => s._id !== id));
+
+      Swal.fire("Deleted!", "Scholarship has been removed.", "success");
+    } catch (error) {
+      console.log(error)
+      Swal.fire("Error!", "Failed to delete scholarship.", "error");
+    }
   };
 
-  // Update scholarship
+  /* ================= UPDATE ================= */
   const updateScholarship = async () => {
-    await fetch(`${API_BASE}/admin/scholarships/${editData._id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editData),
-    });
+    try {
+      await fetch(`${API_BASE}/admin/scholarships/${editData._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editData),
+      });
 
-    setScholarships(
-      scholarships.map((s) => (s._id === editData._id ? editData : s))
-    );
-    setEditData(null);
+      setScholarships(
+        scholarships.map((s) =>
+          s._id === editData._id ? editData : s
+        )
+      );
+
+      setEditData(null);
+
+      Swal.fire("Updated!", "Scholarship updated successfully.", "success");
+    } catch (error) {
+      console.log(error)
+      Swal.fire("Error!", "Failed to update scholarship.", "error");
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center mt-10">
+        <span className="loading loading-infinity loading-lg"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="card bg-base-100 shadow p-6">
@@ -69,6 +108,7 @@ const ManageScholarships = () => {
                 <td>{s.degree}</td>
                 <td>${s.applicationFees}</td>
                 <td>${s.serviceCharge || 0}</td>
+                {/* <td>{s.applicationDeadline?.slice(0, 10)}</td> */}
                 <td>{s.applicationDeadline}</td>
                 <td className="flex gap-2">
                   <button
@@ -86,21 +126,34 @@ const ManageScholarships = () => {
                 </td>
               </tr>
             ))}
+
+            {scholarships.length === 0 && (
+              <tr>
+                <td colSpan="8" className="text-center text-gray-500">
+                  No scholarships found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* Edit Modal */}
+      {/* ================= EDIT MODAL ================= */}
       {editData && (
         <div className="modal modal-open">
           <div className="modal-box">
-            <h3 className="font-bold text-lg mb-4">Update Scholarship</h3>
+            <h3 className="font-bold text-lg mb-4">
+              Update Scholarship
+            </h3>
 
             <input
               className="input input-bordered w-full mb-2"
               value={editData.scholarshipName}
               onChange={(e) =>
-                setEditData({ ...editData, scholarshipName: e.target.value })
+                setEditData({
+                  ...editData,
+                  scholarshipName: e.target.value,
+                })
               }
               placeholder="Scholarship Name"
             />
@@ -109,7 +162,10 @@ const ManageScholarships = () => {
               className="input input-bordered w-full mb-2"
               value={editData.universityName}
               onChange={(e) =>
-                setEditData({ ...editData, universityName: e.target.value })
+                setEditData({
+                  ...editData,
+                  universityName: e.target.value,
+                })
               }
               placeholder="University Name"
             />
@@ -140,7 +196,10 @@ const ManageScholarships = () => {
               className="input input-bordered w-full mb-2"
               value={editData.applicationFees}
               onChange={(e) =>
-                setEditData({ ...editData, applicationFees: e.target.value })
+                setEditData({
+                  ...editData,
+                  applicationFees: e.target.value,
+                })
               }
               placeholder="Application Fees"
             />
@@ -150,7 +209,10 @@ const ManageScholarships = () => {
               className="input input-bordered w-full mb-2"
               value={editData.serviceCharge || 0}
               onChange={(e) =>
-                setEditData({ ...editData, serviceCharge: e.target.value })
+                setEditData({
+                  ...editData,
+                  serviceCharge: e.target.value,
+                })
               }
               placeholder="Service Charge"
             />
@@ -168,10 +230,16 @@ const ManageScholarships = () => {
             />
 
             <div className="modal-action">
-              <button onClick={updateScholarship} className="btn btn-success">
+              <button
+                onClick={updateScholarship}
+                className="btn btn-success"
+              >
                 Save
               </button>
-              <button onClick={() => setEditData(null)} className="btn">
+              <button
+                onClick={() => setEditData(null)}
+                className="btn"
+              >
                 Cancel
               </button>
             </div>

@@ -19,7 +19,7 @@ const TopScholarships = () => {
         }
 
         const data = await res.json();
-        setScholarships(data.slice(0, 6));
+        setScholarships(data.scholarships);
       } catch (err) {
         setError(err.message);
       } finally {

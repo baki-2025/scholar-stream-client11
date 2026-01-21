@@ -50,13 +50,14 @@ export const router = createBrowserRouter([
       { path: "register", element: <Register /> },
 
       {
-        path: "payment/:scholarshipId",
-        element: (
-          <PrivateRoute>
-            <Payment />
-          </PrivateRoute>
-        ),
-      },
+  path: "payment/:scholarshipId/:applicationId",
+  element: (
+    <PrivateRoute>
+      <Payment />
+    </PrivateRoute>
+  ),
+},
+
     ],
   },
 

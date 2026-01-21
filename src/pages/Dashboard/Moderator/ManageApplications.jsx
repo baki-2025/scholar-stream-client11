@@ -1,137 +1,205 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const ManageApplications = () => {
+  const axiosSecure = useAxiosSecure();
+
   const [applications, setApplications] = useState([]);
-  const [selectedApp, setSelectedApp] = useState(null);
+  const [detailsApp, setDetailsApp] = useState(null);
+  const [feedbackApp, setFeedbackApp] = useState(null);
   const [feedback, setFeedback] = useState("");
 
+  /* ================= FETCH ALL APPLICATIONS ================= */
   useEffect(() => {
-    fetch("VITE_API_URL/moderator/applications")
-      .then(res => res.json())
-      .then(data => setApplications(data));
-  }, []);
+    axiosSecure.get("/moderator/applications").then((res) => {
+      setApplications(res.data);
+    });
+  }, [axiosSecure]);
 
+  /* ================= STATUS UPDATE ================= */
   const updateStatus = async (id, status) => {
-    await fetch(`VITE_API_URL/applications/status/${id}`, {
-      method: "PATCH",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
+    await axiosSecure.patch(`/applications/status/${id}`, { status });
 
-    setApplications(applications.map(app =>
-      app._id === id ? { ...app, applicationStatus: status } : app
-    ));
-  };
-
-  const rejectApplication = async (id) => {
-    await fetch(`VITE_API_URL/applications/reject/${id}`, {
-      method: "PATCH",
-    });
-
-    setApplications(applications.map(app =>
-      app._id === id ? { ...app, applicationStatus: "rejected" } : app
-    ));
-  };
-
-  const submitFeedback = async () => {
-    await fetch(
-      `VITE_API_URL/applications/feedback/${selectedApp._id}`,
-      {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ feedback }),
-      }
+    setApplications((prev) =>
+      prev.map((app) =>
+        app._id === id ? { ...app, applicationStatus: status } : app
+      )
     );
 
-    setApplications(applications.map(app =>
-      app._id === selectedApp._id ? { ...app, feedback } : app
-    ));
+    Swal.fire("Updated!", `Status changed to ${status}`, "success");
+  };
 
-    setSelectedApp(null);
+  /* ================= REJECT ================= */
+  const rejectApplication = async (id) => {
+    const confirm = await Swal.fire({
+      title: "Reject Application?",
+      text: "This application will be rejected",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Reject",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    await axiosSecure.patch(`/applications/status/${id}`, {
+      status: "rejected",
+    });
+
+    setApplications((prev) =>
+      prev.map((app) =>
+        app._id === id ? { ...app, applicationStatus: "rejected" } : app
+      )
+    );
+
+    Swal.fire("Rejected!", "Application has been rejected", "success");
+  };
+
+  /* ================= FEEDBACK ================= */
+  const submitFeedback = async () => {
+    await axiosSecure.patch(`/applications/feedback/${feedbackApp._id}`, {
+      feedback,
+    });
+
+    setApplications((prev) =>
+      prev.map((app) =>
+        app._id === feedbackApp._id ? { ...app, feedback } : app
+      )
+    );
+
+    setFeedbackApp(null);
     setFeedback("");
+    Swal.fire("Success!", "Feedback submitted", "success");
   };
 
   return (
     <div className="card bg-base-100 shadow p-6">
-      <h2 className="text-2xl text-center font-bold mb-4">Manage Applications</h2>
+      <h2 className="text-2xl text-center font-bold mb-6">
+        Manage Applied Applications
+      </h2>
 
-      <table className="table table-zebra">
-        <thead>
-          <tr>
-            <th>Applicant</th>
-            <th>University</th>
-            <th>Status</th>
-            <th>Payment</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {applications.map(app => (
-            <tr key={app._id}>
-              <td>{app.applicantName}</td>
-              <td>{app.universityName}</td>
-              <td>
-                <span className="badge badge-info">
-                  {app.applicationStatus}
-                </span>
-              </td>
-              <td>
-                <span className={`badge ${
-                  app.paymentStatus === "paid"
-                    ? "badge-success"
-                    : "badge-error"
-                }`}>
-                  {app.paymentStatus}
-                </span>
-              </td>
-              <td className="space-x-1">
-                <button
-                  onClick={() => updateStatus(app._id, "processing")}
-                  className="btn btn-xs btn-warning"
-                >
-                  Processing
-                </button>
-
-                <button
-                  onClick={() => updateStatus(app._id, "completed")}
-                  className="btn btn-xs btn-success"
-                >
-                  Completed
-                </button>
-
-                <button
-                  onClick={() => {
-                    setSelectedApp(app);
-                    setFeedback(app.feedback || "");
-                  }}
-                  className="btn btn-xs btn-info"
-                >
-                  Feedback
-                </button>
-
-                <button
-                  onClick={() => rejectApplication(app._id)}
-                  className="btn btn-xs btn-error"
-                >
-                  Reject
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="table table-zebra">
+          <thead>
+            <tr>
+              <th>Applicant Email</th>
+              <th>University</th>
+              <th>Feedback</th>
+              <th>Status</th>
+              <th>Payment</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
 
-      {/* Feedback Modal */}
-      {selectedApp && (
-        <div className="modal modal-open">
+          <tbody>
+            {applications.map((app) => (
+              <tr key={app._id}>
+                <td>{app.applicantEmail}</td>
+                <td>{app.universityName}</td>
+                <td className="max-w-xs truncate">
+                  {app.feedback || "No feedback"}
+                </td>
+                <td>
+                  <span className="badge badge-info">
+                    {app.applicationStatus}
+                  </span>
+                </td>
+                <td>
+                  <span
+                    className={`badge ${
+                      app.paymentStatus === "paid"
+                        ? "badge-success"
+                        : "badge-error"
+                    }`}
+                  >
+                    {app.paymentStatus}
+                  </span>
+                </td>
+
+                <td className="flex flex-wrap gap-1">
+                  {/* DETAILS */}
+                  <button
+                    className="btn btn-xs btn-outline"
+                    onClick={() => setDetailsApp(app)}
+                  >
+                    Details
+                  </button>
+
+                  {/* STATUS */}
+                  <button
+                    className="btn btn-xs btn-warning"
+                    onClick={() => updateStatus(app._id, "processing")}
+                  >
+                    Processing
+                  </button>
+
+                  <button
+                    className="btn btn-xs btn-success"
+                    onClick={() => updateStatus(app._id, "completed")}
+                  >
+                    Completed
+                  </button>
+
+                  {/* FEEDBACK */}
+                  <button
+                    className="btn btn-xs btn-info"
+                    onClick={() => {
+                      setFeedbackApp(app);
+                      setFeedback(app.feedback || "");
+                    }}
+                  >
+                    Feedback
+                  </button>
+
+                  {/* REJECT */}
+                  <button
+                    className="btn btn-xs btn-error"
+                    onClick={() => rejectApplication(app._id)}
+                  >
+                    Reject
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* DETAILS MODAL */}
+      {detailsApp && (
+        <dialog open className="modal">
           <div className="modal-box">
-            <h3 className="font-bold text-lg">Give Feedback</h3>
+            <h3 className="font-bold text-lg mb-2">Application Details</h3>
+
+            <p><strong>Applicant:</strong> {detailsApp.applicantEmail}</p>
+            <p><strong>University:</strong> {detailsApp.universityName}</p>
+            <p><strong>Degree:</strong> {detailsApp.degree}</p>
+            <p><strong>Category:</strong> {detailsApp.scholarshipCategory}</p>
+            <p><strong>Fees:</strong> ${detailsApp.applicationFees}</p>
+            <p><strong>Status:</strong> {detailsApp.applicationStatus}</p>
+            <p><strong>Payment:</strong> {detailsApp.paymentStatus}</p>
+
+            <div className="modal-action">
+              <button className="btn" onClick={() => setDetailsApp(null)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+
+      {/* FEEDBACK MODAL */}
+      {feedbackApp && (
+        <dialog open className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg mb-3">Write Feedback</h3>
 
             <textarea
-              className="textarea textarea-bordered w-full mt-2"
+              className="textarea textarea-bordered w-full"
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
+              placeholder="Write constructive feedback..."
             />
 
             <div className="modal-action">
@@ -139,14 +207,14 @@ const ManageApplications = () => {
                 Submit
               </button>
               <button
-                onClick={() => setSelectedApp(null)}
+                onClick={() => setFeedbackApp(null)}
                 className="btn"
               >
                 Cancel
               </button>
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   );

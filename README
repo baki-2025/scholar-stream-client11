@@ -1,5 +1,132 @@
-Project name: ScholarStream
-Purpose:Scholarship Management Platform
-Live URL:
-Key features:
-npm packages used:
+ScholarStream (Scholarship Management Platform)
+Project Name: ScholarStream
+Course Assignment: B12-A11_category-02
+Project Type: Full-Stack MERN Application
+Status: Completed
+
+Table of Contents
+1.Project Overview
+2.Key Features
+3.Technologies Used
+4.Data Design
+5.Authentication & Security
+6.Pages & Layout
+7.Payment System
+8.Dashboard Layout
+9.Deployment & Environment Variables
+10.Future Enhancements
+11.GitHub Repositories
+12.Live Site Link
+
+1.Project Overview
+
+ScholarStream is a full-stack MERN application designed to connect students with scholarship opportunities worldwide. Universities or organizations can post scholarships, while students can browse, search, and apply for them.
+The platform streamlines the application and review process, allowing moderators and admins to manage applications efficiently.
+
+Why this project?
+
+Simplifies the process of finding financial aid for students.
+Centralizes scholarship listings to ensure students don’t miss opportunities.
+Enables admins to monitor and analyze platform data effectively.
+
+2.Key Features
+
+User Registration and Authentication (JWT + Google Social Login)
+Role-based Access (Student, Moderator, Admin)
+Scholarship Listing, Search, Filter, and Sorting
+Scholarship Details with Reviews and Recommendations
+Application System with status tracking (Pending → Processing → Completed)
+Stripe Payment Integration for application fees
+User Dashboards with role-specific views
+Analytics dashboard for Admin (Charts & Metrics)
+Responsive design with loading states and custom 404 page
+
+3.Technologies Used
+
+Frontend:
+React.js
+React Router
+DaisyUI + Tailwind CSS
+Framer Motion (Animations)
+
+Backend:
+Node.js
+Express.js
+MongoDB 
+Firebase Admin (Authentication + Secure Config)
+Stripe (Payment Integration)
+
+Other Tools:
+otenv (Environment variables)
+JWT (Authentication & Authorization)
+Axios (API Calls)
+
+4.Data Design (MongoDB Collections)
+Users Collection,
+Scholarships Collection,
+Applications Collection,
+Reviews Collection.
+
+
+5.Authentication & Security
+JWT Token Verification for secure API calls
+Role-based middleware: verifyAdmin and verifyModerator
+Password validation on registration (minimum 6 chars, uppercase, special character)
+Social Login (Google OAuth)
+Environment variables for Firebase credentials, MongoDB credentials, and Stripe API keys
+
+6.Pages & Layout
+
+Public Pages:
+Home Page (Top Scholarships, Hero Section, Animations)
+All Scholarships Page (Search, Filter, Sort, Pagination)
+Scholarship Details Page (Apply button, Reviews)
+Login / Register Pages
+404 Error Page
+
+Private Pages (Dashboard):
+Student Dashboard: My Applications, My Reviews, Pay / Delete / Edit Applications
+
+Moderator Dashboard: Manage Applications, Add Feedback, Review Management
+
+Admin Dashboard: Manage Users, Add/Edit/Delete Scholarships, Analytics
+
+Shared Layouts:
+
+Navbar (Logo, Home, All Scholarships, Login/Register, Profile dropdown)
+Footer (Logo, Copyright, Social Media)
+
+7.Payment System
+
+Stripe Checkout Integration
+Secure application fee payment
+Payment status saved in Applications Collection
+Payment Success / Failure Pages with proper redirects
+Retry payment option available on Dashboard
+
+8.Dashboard Layout
+
+Admin:
+
+User Management (Role change, Delete users)
+Scholarship Management (Add/Edit/Delete scholarships)
+Analytics (Total Users, Total Scholarships, Total Fees, Charts)
+
+Moderator:
+
+Manage all applications
+Provide feedback
+Update status (Processing / Completed / Rejected)
+Moderate reviews
+
+Student:
+
+View profile
+Manage personal applications
+Edit or delete pending applications
+Make payments
+Add/Edit/Delete reviews
+
+
+
+

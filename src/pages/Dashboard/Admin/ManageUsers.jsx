@@ -107,7 +107,7 @@ const ManageUsers = () => {
   return (
     <div className="card bg-base-100 shadow p-6">
       <h2 className="text-2xl text-center font-bold mb-4">
-        Manage Users
+        Manage Users:{users.length}
       </h2>
 
       {/* Role Filter */}

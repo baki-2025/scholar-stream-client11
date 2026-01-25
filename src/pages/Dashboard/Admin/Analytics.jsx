@@ -10,18 +10,16 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const Analytics = () => {
+  const axiosSecure = useAxiosSecure();
   const [stats, setStats] = useState(null);
 
- const API = import.meta.env.VITE_API_URL;
-
-useEffect(() => {
-  fetch(`${API}/admin/analytics`)
-    .then(res => res.json())
-    .then(data => setStats(data));
-}, [API]);
-
+  useEffect(() => {
+    axiosSecure.get("/admin/analytics")
+      .then(res => setStats(res.data));
+  }, [axiosSecure]);
 
   if (!stats) return <p>Loading...</p>;
 

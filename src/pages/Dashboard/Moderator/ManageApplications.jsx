@@ -76,7 +76,7 @@ const ManageApplications = () => {
   return (
     <div className="card bg-base-100 shadow p-6">
       <h2 className="text-2xl text-center font-bold mb-6">
-        Manage Applied Applications
+        Manage Applied Applications:{applications.length}
       </h2>
 
       <div className="overflow-x-auto">

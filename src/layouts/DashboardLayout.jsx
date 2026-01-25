@@ -1,7 +1,9 @@
 import { NavLink, Outlet } from "react-router";
 import useRole from "../hooks/useRole";
 import Loading from "../Components/Loading";
-import { FcDepartment } from "react-icons/fc";
+import { FcAddDatabase, FcAutomatic, FcCollaboration, FcComboChart, FcConferenceCall, FcDepartment, FcRating, FcRules, FcTemplate, FcTimeline } from "react-icons/fc";
+import { MdManageAccounts } from "react-icons/md";
+import { TbStars } from "react-icons/tb";
 
 const DashboardLayout = () => {
   const { role, roleLoading } = useRole();
@@ -25,6 +27,7 @@ const DashboardLayout = () => {
             >
               ☰
             </label>
+            <FcDepartment />
             <span className="text-lg font-semibold px-4">
               ScholarStream Dashboard
             </span>
@@ -50,7 +53,7 @@ const DashboardLayout = () => {
             </li>
 
             <li>
-              <NavLink to="/dashboard/my-profile">👤 My Profile</NavLink>
+              <NavLink to="/dashboard/my-profile"><MdManageAccounts /> My Profile</NavLink>
             </li>
 
            {/* ===== Admin Menu ===== */}
@@ -60,22 +63,26 @@ const DashboardLayout = () => {
     
     <li>
       <NavLink to="/dashboard/admin/add-scholarship">
-        ➕ Add Scholarship
+        <FcAddDatabase /> 
+        Add Scholarship
       </NavLink>
     </li>
     <li>
       <NavLink to="/dashboard/admin/manage-scholarships">
-        📚 Manage Scholarships
+        <FcRules />
+         Manage Scholarships
       </NavLink>
     </li>
     <li>
       <NavLink to="/dashboard/admin/manage-users">
-        👥 Manage Users
+        <FcConferenceCall />
+        Manage Users
       </NavLink>
     </li>
     <li>
       <NavLink to="/dashboard/admin/analytics">
-        📊 Analytics
+        <FcComboChart />
+         Analytics
       </NavLink>
     </li>
   </>
@@ -89,12 +96,14 @@ const DashboardLayout = () => {
 
     <li>
       <NavLink to="/dashboard/moderator/manage-applications">
-        📝 Manage Applications
+       <FcTemplate />
+        Manage Applications
       </NavLink>
     </li>
     <li>
       <NavLink to="/dashboard/moderator/all-reviews">
-        ⭐ All Reviews
+        <TbStars />
+         All Reviews
       </NavLink>
     </li>
   </>
@@ -107,12 +116,14 @@ const DashboardLayout = () => {
     
     <li>
       <NavLink to="/dashboard/student/my-applications">
-        📄 My Applications
+        <FcTimeline />
+         My Applications
       </NavLink>
     </li>
     <li>
       <NavLink to="/dashboard/student/my-reviews">
-        ✍️ My Reviews
+        <FcRating />
+         My Reviews
       </NavLink>
     </li>
   </>

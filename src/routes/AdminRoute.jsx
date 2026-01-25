@@ -4,7 +4,7 @@ import Loading from "../Components/Loading";
 
 const AdminRoute = ({ children }) => {
   const { role, roleLoading } = useRole();
-
+console.log(role)
   if (roleLoading) return <Loading />;
 
   if (role !== "admin") {

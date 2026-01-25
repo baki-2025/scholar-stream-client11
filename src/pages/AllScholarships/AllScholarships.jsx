@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ScholarshipCard from "../ScholarshipCard/ScholarshipCard";
 
+
 const AllScholarships = () => {
   const [scholarships, setScholarships] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -94,7 +95,8 @@ const AllScholarships = () => {
 
       {/* 📄 GRID */}
       {loading ? (
-        <p className="text-center">Loading...</p>
+         <p className="text-center">Loading ...</p> 
+        
       ) : scholarships.length === 0 ? (
         <p className="text-center">No scholarships found</p>
       ) : (

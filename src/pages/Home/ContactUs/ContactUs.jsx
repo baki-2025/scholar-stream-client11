@@ -18,7 +18,7 @@ const ContactUs = () => {
 
   return (
     <section className="py-14 px-4">
-      <h2 className="text-3xl font-bold text-center mb-10">
+      <h2 className="text-3xl font-bold text-green-500 text-center mb-10">
         Frequently Asked Questions
       </h2>
 

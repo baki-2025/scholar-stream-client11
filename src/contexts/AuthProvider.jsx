@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { AuthContext } from './AuthContext';
+import { useEffect, useState } from "react";
+import { AuthContext } from "./AuthContext";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -8,8 +8,9 @@ import {
   signInWithPopup,
   signOut,
   updateProfile,
-} from 'firebase/auth';
-import { auth } from '../firebase/firebase.init';
+} from "firebase/auth";
+import { auth } from "../firebase/firebase.init";
+import axios from "axios";
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -17,38 +18,82 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const registerUser = (email, password) => {
+  /* ================= REGISTER ================= */
+  const registerUser = async (email, password) => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+
+    // 🔐 Get JWT from backend
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/jwt`,
+      { email: result.user.email }
+    );
+
+    // ✅ Save JWT
+    localStorage.setItem("access-token", res.data.token);
+
+    return result;
   };
 
-  const signInUser = (email, password) => {
+  /* ================= LOGIN ================= */
+  const signInUser = async (email, password) => {
     setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
+
+    const result = await signInWithEmailAndPassword(auth, email, password);
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/jwt`,
+      { email: result.user.email }
+    );
+
+    localStorage.setItem("access-token", res.data.token);
+
+    return result;
   };
 
-  const GoogleSignIn = () => {
+  /* ================= GOOGLE LOGIN ================= */
+  const GoogleSignIn = async () => {
     setLoading(true);
-    return signInWithPopup(auth, googleProvider);
+
+    const result = await signInWithPopup(auth, googleProvider);
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/jwt`,
+      { email: result.user.email }
+    );
+
+    localStorage.setItem("access-token", res.data.token);
+
+    return result;
   };
 
-  const logOut = () => {
+  /* ================= LOGOUT ================= */
+  const logOut = async () => {
     setLoading(true);
+
+    // 🧹 Remove JWT
+    localStorage.removeItem("access-token");
+
     return signOut(auth);
   };
 
+  /* ================= UPDATE PROFILE ================= */
   const updateUserProfile = (profile) => {
     return updateProfile(auth.currentUser, profile);
   };
 
+  /* ================= AUTH STATE ================= */
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
+  /* ================= CONTEXT VALUE ================= */
   const authInfo = {
     user,
     loading,

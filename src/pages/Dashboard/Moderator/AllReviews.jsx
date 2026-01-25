@@ -75,7 +75,7 @@ const AllReviews = () => {
   return (
     <div className="card bg-base-100 shadow p-6">
       <h2 className="text-2xl font-bold text-center mb-6">
-        All Reviews
+        All Reviews:{reviews.length}
       </h2>
 
       <div className="overflow-x-auto">

@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+
 
 const ManageScholarships = () => {
+  const axiosSecure = useAxiosSecure()
+
   const [scholarships, setScholarships] = useState([]);
   const [editData, setEditData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const API_BASE = import.meta.env.VITE_API_URL;
-
   /* ================= FETCH SCHOLARSHIPS ================= */
   useEffect(() => {
-    fetch(`${API_BASE}/admin/scholarships`)
-      .then((res) => res.json())
-      .then((data) => {
-        setScholarships(data);
+    axiosSecure
+      .get("/admin/scholarships")
+      .then((res) => {
+        setScholarships(res.data);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [axiosSecure]);
 
   /* ================= DELETE ================= */
   const deleteScholarship = async (id) => {
@@ -33,39 +35,36 @@ const ManageScholarships = () => {
     if (!result.isConfirmed) return;
 
     try {
-      await fetch(`${API_BASE}/admin/scholarships/${id}`, {
-        method: "DELETE",
-      });
+      await axiosSecure.delete(`/admin/scholarships/${id}`);
 
-      setScholarships(scholarships.filter((s) => s._id !== id));
+      setScholarships((prev) => prev.filter((s) => s._id !== id));
 
       Swal.fire("Deleted!", "Scholarship has been removed.", "success");
     } catch (error) {
-      console.log(error)
+      console.error(error);
       Swal.fire("Error!", "Failed to delete scholarship.", "error");
     }
   };
 
   /* ================= UPDATE ================= */
   const updateScholarship = async () => {
-    try {
-      await fetch(`${API_BASE}/admin/scholarships/${editData._id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editData),
-      });
+    const { _id, ...updatedData } = editData; // remove _id
 
-      setScholarships(
-        scholarships.map((s) =>
-          s._id === editData._id ? editData : s
-        )
+    try {
+      await axiosSecure.patch(
+        `/admin/scholarships/${_id}`,
+        updatedData
+      );
+
+      setScholarships((prev) =>
+        prev.map((s) => (s._id === _id ? editData : s))
       );
 
       setEditData(null);
 
       Swal.fire("Updated!", "Scholarship updated successfully.", "success");
     } catch (error) {
-      console.log(error)
+      console.error(error);
       Swal.fire("Error!", "Failed to update scholarship.", "error");
     }
   };
@@ -81,7 +80,7 @@ const ManageScholarships = () => {
   return (
     <div className="card bg-base-100 shadow p-6">
       <h2 className="text-2xl text-center font-bold mb-4">
-        Manage Scholarships
+        Manage Scholarships:{scholarships.length}
       </h2>
 
       <div className="overflow-x-auto">
@@ -108,8 +107,7 @@ const ManageScholarships = () => {
                 <td>{s.degree}</td>
                 <td>${s.applicationFees}</td>
                 <td>${s.serviceCharge || 0}</td>
-                {/* <td>{s.applicationDeadline?.slice(0, 10)}</td> */}
-                <td>{s.applicationDeadline}</td>
+                <td>{s.applicationDeadline?.slice(0, 10)}</td>
                 <td className="flex gap-2">
                   <button
                     onClick={() => setEditData(s)}
@@ -146,50 +144,25 @@ const ManageScholarships = () => {
               Update Scholarship
             </h3>
 
-            <input
-              className="input input-bordered w-full mb-2"
-              value={editData.scholarshipName}
-              onChange={(e) =>
-                setEditData({
-                  ...editData,
-                  scholarshipName: e.target.value,
-                })
-              }
-              placeholder="Scholarship Name"
-            />
-
-            <input
-              className="input input-bordered w-full mb-2"
-              value={editData.universityName}
-              onChange={(e) =>
-                setEditData({
-                  ...editData,
-                  universityName: e.target.value,
-                })
-              }
-              placeholder="University Name"
-            />
-
-            <input
-              className="input input-bordered w-full mb-2"
-              value={editData.scholarshipCategory}
-              onChange={(e) =>
-                setEditData({
-                  ...editData,
-                  scholarshipCategory: e.target.value,
-                })
-              }
-              placeholder="Scholarship Category"
-            />
-
-            <input
-              className="input input-bordered w-full mb-2"
-              value={editData.degree}
-              onChange={(e) =>
-                setEditData({ ...editData, degree: e.target.value })
-              }
-              placeholder="Degree"
-            />
+            {[
+              "scholarshipName",
+              "universityName",
+              "scholarshipCategory",
+              "degree",
+            ].map((field) => (
+              <input
+                key={field}
+                className="input input-bordered w-full mb-2"
+                value={editData[field]}
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    [field]: e.target.value,
+                  })
+                }
+                placeholder={field}
+              />
+            ))}
 
             <input
               type="number"

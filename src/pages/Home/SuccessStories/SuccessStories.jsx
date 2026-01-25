@@ -1,7 +1,7 @@
 const SuccessStories = () => {
   return (
     <section className="bg-base-200 py-14 px-4">
-      <h2 className="text-3xl font-bold text-center mb-8">
+      <h2 className="text-3xl font-bold text-pink-500 text-center mb-8">
         Student Success Stories
       </h2>
 

@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "scholar-stream-bc94e",
+    "prod": "scholar-stream-bc94e"
+  },
+  "targets": {},
+  "etags": {}
+}

@@ -3,8 +3,6 @@ import { Link, NavLink, useNavigate } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import { FcDepartment } from "react-icons/fc";
 
-
-
 const Navbar = () => {
   const { user, logOut } = useAuth();
   const navigate = useNavigate();
@@ -12,59 +10,128 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logOut();
-      navigate("/login")
+      navigate("/login");
     } catch (error) {
       console.error(error);
     }
   };
 
   const links = (
-  <>
-    <li><NavLink to="/" className='text-2xl text-blue-600 font-semibold'>Home</NavLink></li>
-    <li><NavLink to="/scholarships"className='text-2xl text-green-600 font-semibold'>All Scholarships</NavLink></li>
-    
+    <>
+      <li>
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            isActive ? "text-primary text-2xl font-bold" : "font-semibold"
+          }
+        >
+          Home
+        </NavLink>
+      </li>
 
-    {user && (
-      <>
-        <li><NavLink to="/dashboard" className="text-2xl text-violet-600 font-semibold">Dashboard</NavLink></li>
-      </>
-    )}
+      <li>
+        <NavLink
+          to="/scholarships"
+          className={({ isActive }) =>
+            isActive ? "text-primary text-2xl font-bold" : "font-semibold"
+          }
+        >
+          All Scholarships
+        </NavLink>
+      </li>
 
-    
-  </>
-);
-
+      {user && (
+        <li>
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              isActive ? "text-primary text-2xl font-bold" : "font-semibold"
+            }
+          >
+            Dashboard
+          </NavLink>
+        </li>
+      )}
+    </>
+  );
 
   return (
-    <div className="navbar bg-base-100 shadow-md px-4">
+    <div className="navbar bg-base-100 shadow-md px-4 md:px-6 lg:px-8">
+
       {/* LEFT */}
       <div className="navbar-start">
-        
-        <Link to="/" className="btn text-2xl text-red-600 font-semibold">
-        <FcDepartment />
+
+        {/* Mobile Menu */}
+        <div className="dropdown">
+          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h8m-8 6h16"
+              />
+            </svg>
+          </div>
+
+          <ul
+            tabIndex={0}
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            {links}
+          </ul>
+        </div>
+
+        {/* Logo */}
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-lg sm:text-xl md:text-2xl font-bold"
+        >
+          <FcDepartment className="text-2xl sm:text-3xl" />
           ScholarStream
         </Link>
       </div>
 
-      {/* CENTER */}
+      {/* CENTER - Desktop */}
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">{links}</ul>
+        <ul className="menu menu-horizontal px-1 gap-4">
+          {links}
+        </ul>
       </div>
 
       {/* RIGHT */}
-      <div className="navbar-end gap-2">
+      <div className="navbar-end gap-2 flex-wrap">
+
         {user ? (
-          <button onClick={handleLogout} className="btn text-2xl text-red-600 font-semibold">
+          <button
+            onClick={handleLogout}
+            className="btn btn-error text-2xl btn-sm sm:btn-md"
+          >
             Logout
           </button>
         ) : (
           <>
-            <Link to="/login" className="btn text-2xl text-green-600 font-semibold">Login</Link>
-            <Link to="/register" className="btn text-2xl text-yellow-600 font-semibold">Register</Link>
+            <Link
+              to="/login"
+              className="btn btn-success text-2xl btn-sm sm:btn-md"
+            >
+              Login
+            </Link>
+
+            <Link
+              to="/register"
+              className="btn btn-warning text-2xl btn-sm sm:btn-md"
+            >
+              Register
+            </Link>
           </>
         )}
-
-        
       </div>
     </div>
   );

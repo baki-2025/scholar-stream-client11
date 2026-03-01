@@ -9,7 +9,7 @@ const Banner = () => {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="hero min-h-[55vh] bg-base-300"
+      className="hero min-h-[55vh] bg-red-200"
     >
       <div className="hero-content text-center">
         <div className="max-w-2xl">

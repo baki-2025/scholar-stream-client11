@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ScholarshipCard from "../ScholarshipCard/ScholarshipCard";
+import SkeletonCard from "../../Components/SkeletonCard/SkeletonCard";
 
 
 const AllScholarships = () => {
@@ -13,7 +14,7 @@ const AllScholarships = () => {
   const [sort, setSort] = useState("");
 
   const [page, setPage] = useState(1);
-  const limit = 6;
+  const limit = 8;
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
@@ -95,12 +96,16 @@ const AllScholarships = () => {
 
       {/* 📄 GRID */}
       {loading ? (
-         <p className="text-center">Loading ...</p> 
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    {[...Array(limit)].map((_, index) => (
+      <SkeletonCard key={index} />
+    ))}
+  </div>
         
       ) : scholarships.length === 0 ? (
         <p className="text-center">No scholarships found</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {scholarships.map((s) => (
             <ScholarshipCard key={s._id} scholarship={s} />
           ))}

@@ -18,18 +18,18 @@ const ContactUs = () => {
 
   return (
     <section className="py-14 px-4">
-      <h2 className="text-3xl font-bold text-green-500 text-center mb-10">
+      <h2 className="text-3xl font-bold text-blue-500 text-center mb-10">
         Frequently Asked Questions
       </h2>
 
       <div className="max-w-4xl mx-auto space-y-4">
         {faqs.map((faq, index) => (
-          <div key={index} className="collapse collapse-arrow bg-base-200">
+          <div key={index} className="collapse collapse-arrow bg-yellow-300">
             <input type="checkbox" />
             <div className="collapse-title font-medium text-lg">
               {faq.question}
             </div>
-            <div className="collapse-content text-gray-600">
+            <div className="collapse-content text-pink-600">
               <p>{faq.answer}</p>
             </div>
           </div>

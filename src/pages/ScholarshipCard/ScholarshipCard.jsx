@@ -25,7 +25,8 @@ const ScholarshipCard = ({ scholarship }) => {
         </p>
 
         <p className="text-sm">
-          <strong>Application Fee:</strong>{" "}
+           <strong>Application Fee:</strong>
+           {/* {" "}  */}
           {scholarship.applicationFee}
         </p>
 

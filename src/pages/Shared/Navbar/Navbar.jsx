@@ -22,7 +22,7 @@ const Navbar = () => {
         <NavLink
           to="/"
           className={({ isActive }) =>
-            isActive ? "text-primary text-2xl font-bold" : "font-semibold"
+            isActive ? "text-primary text-2xl font-bold" : "font-semibold text-2xl"
           }
         >
           Home
@@ -33,7 +33,7 @@ const Navbar = () => {
         <NavLink
           to="/scholarships"
           className={({ isActive }) =>
-            isActive ? "text-primary text-2xl font-bold" : "font-semibold"
+            isActive ? "text-primary text-2xl font-bold" : "font-semibold text-2xl"
           }
         >
           All Scholarships
@@ -45,7 +45,7 @@ const Navbar = () => {
           <NavLink
             to="/dashboard"
             className={({ isActive }) =>
-              isActive ? "text-primary text-2xl font-bold" : "font-semibold"
+              isActive ? "text-primary text-2xl font-bold" : "font-semibold text-2xl"
             }
           >
             Dashboard
